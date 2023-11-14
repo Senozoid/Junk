@@ -2,8 +2,13 @@ package codebase.math.calc;
 
 import java.util.Scanner;
 
+/*
+TODO (NOTES)
+    1. Do not change the order of elements in the validOperators array. If a delimiter is recognised through a regex which is a subexpression of another regex, the smaller one must appear later in the checking order. For example, the loop in evalTerm() should not look for "<" before "<=", or for ">" before ">=".
+*/
+
 public class BooleanEvaluator{
-    private static final String[] validOperators={"==","<=","<<",">>",">=","!="};//if you change this, change the switch-case as well
+    private static final String[] validOperators={"==","!=","<=",">=","<",">"};//WARNING: DO NOT CHANGE THIS ORDER, SEE NOTES
 
     public static void main(String[] args){
         boolean status;
@@ -30,7 +35,7 @@ public class BooleanEvaluator{
         expression=expression.strip();
         if(expression.length()<4) throw new UnresolvedSymbolException();
 
-        if(expression.contains("(")||expression.contains(")")) status= evalBrackets(expression);
+        if(expression.contains("(")||expression.contains(")")) status=evalBrackets(expression);
         else status=evalNoBrackets(expression);
 
         return status;
@@ -107,7 +112,7 @@ public class BooleanEvaluator{
         String[] operandStrings;
 
         term=term.strip();
-        if(term.length()<4) throw new UnresolvedSymbolException();
+        if(term.length()<3) throw new UnresolvedSymbolException();
         if(term.charAt(0)=='!') return !evalTerm(term.substring(1));
 
         for (String operator : validOperators) {
@@ -125,11 +130,11 @@ public class BooleanEvaluator{
 
                 status=switch(operator){//if you change this, change the static final array as well
                     case "==" -> operands[0]==operands[1];
-                    case "<=" -> operands[0]<=operands[1];
-                    case "<<" -> operands[0]<operands[1];
-                    case ">>" -> operands[0]>operands[1];
-                    case ">=" -> operands[0]>=operands[1];
                     case "!=" -> operands[0]!=operands[1];
+                    case "<=" -> operands[0]<=operands[1];
+                    case ">=" -> operands[0]>=operands[1];
+                    case "<" -> operands[0]<operands[1];
+                    case ">" -> operands[0]>operands[1];
                     default -> throw new UnresolvedSymbolException();
                 };
 
