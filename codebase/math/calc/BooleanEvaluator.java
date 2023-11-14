@@ -1,19 +1,8 @@
 package codebase.math.calc;
 
-import java.util.ArrayList;
 import java.util.Scanner;
 
-/*
-TODO NOTES:
-    1. Avoid the NOT operator (!):
-        It is preferable to completely avoid it, because there are several bugs related to it that have not been fixed.
-        It may not work as expected if used at the beginning of the expression or if it is the first thing inside a bracket.
-        In those cases, it will invert the value of the entire subexpression instead of the immediately next term.
-        If used immediately before a bracket, it may mess up everything... etc.
-*/
-
 public class BooleanEvaluator{
-    private static final int operatorLength=2;//ol=1 for numbers, ol=2 for booleans
     private static final String[] validOperators={"==","<=","<<",">>",">=","!="};//if you change this, change the switch-case as well
 
     public static void main(String[] args){
@@ -40,44 +29,26 @@ public class BooleanEvaluator{
 
         expression=expression.strip();
         if(expression.length()<4) throw new UnresolvedSymbolException();
-        if(expression.charAt(0)=='!') return !evaluate(expression.substring(1));
 
-        if(expression.contains("(")||expression.contains(")")) status=evalBrackets(expression);
+        if(expression.contains("(")||expression.contains(")")) status= evalBrackets(expression);
         else status=evalNoBrackets(expression);
 
         return status;
     }
 
     private static boolean evalBrackets(String expression) throws IllegalBracketException, UnresolvedSymbolException {
-        StringBuilder bracketless;
-        ArrayList<Boolean> subexEvals;
-        ArrayList<String> subexes = new ArrayList<>();
-        ArrayList<String> linkers = new ArrayList<>();
-        int b=0,xl,terms;
+        StringBuilder bracketless=new StringBuilder();
+        StringBuilder subexpression;
+        boolean evaluation;
+        int b=0;
         char c;
-        StringBuilder exbuilder=null;
-        StringBuilder opbuilder;
         int length=expression.length();
 
-        for(int i = 0; i<length; i++){
+        for(int i=0; i<length; i++) {
             c=expression.charAt(i);
             if(c=='('){
                 b++;
-
-                if(exbuilder!=null&&!exbuilder.isEmpty()){
-                    xl=exbuilder.length();
-                    if(xl<=operatorLength) throw new UnresolvedSymbolException();
-                    opbuilder=new StringBuilder();
-                    for(int j=operatorLength; j>0; j--){
-                        opbuilder.append(exbuilder.charAt(xl-j));
-                    }
-                    linkers.add(opbuilder.toString());
-                    exbuilder.delete(xl-operatorLength,xl);
-                    subexes.add(exbuilder.toString());
-                }
-
-                exbuilder=new StringBuilder();
-
+                subexpression=new StringBuilder();
                 while(true){
                     if(++i>=length) throw new IllegalBracketException();
                     c=expression.charAt(i);
@@ -87,67 +58,13 @@ public class BooleanEvaluator{
                         if(--b==0) break;
                     }
 
-                    exbuilder.append(c);
+                    subexpression.append(c);
                 }
-
-                subexes.add(exbuilder.toString());
-                exbuilder=new StringBuilder();
-
-                /*
-                "subexp)||subexp"
-                       ^here
-                */
-                i++;
-                /*
-                "subexp)||subexp"
-                        ^here
-                */
-                if(i<length){
-                    if(i<(length-operatorLength)){
-                        opbuilder=new StringBuilder();
-                        for(int j=i; i<(j+operatorLength); i++){
-                            opbuilder.append(expression.charAt(i));
-                        }
-                        /*
-                        "subexp)||subexp"
-                                  ^here
-                        */
-                        linkers.add(opbuilder.toString());
-                    }
-                    else if (expression.charAt(i)=='('||expression.charAt(i)==')') throw new IllegalBracketException();
-                    else throw new UnresolvedSymbolException();
-                }
-                i--;
-                /*
-                "subexp)||subexp"
-                         ^here now
-                "subexp)||subexp"
-                          ^here when the next iteration begins
-                */
+                evaluation=evaluate(subexpression.toString());
+                bracketless.append(evaluation);
             }
             else if(c==')') throw new IllegalBracketException();
-            else{
-                if(exbuilder==null) exbuilder=new StringBuilder();
-                exbuilder.append(c);
-            }
-        }
-        if(exbuilder!=null&&!exbuilder.isEmpty()) subexes.add(exbuilder.toString());
-
-        subexEvals = new ArrayList<>();
-        for(String sub : subexes) subexEvals.add(evaluate(sub));
-
-        bracketless=new StringBuilder();
-
-        terms=subexEvals.size();
-        if(linkers.size()>terms) throw new UnresolvedSymbolException();
-        else if(linkers.size()==terms){
-            bracketless.append(linkers.get(0));
-            linkers.remove(0);
-        }
-
-        for (int i = 0; i < terms; i++){
-            bracketless.append(subexEvals.get(i));
-            if(i<linkers.size()) bracketless.append(linkers.get(i));
+            else bracketless.append(c);
         }
 
         return evaluate(bracketless.toString());
