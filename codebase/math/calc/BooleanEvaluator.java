@@ -32,9 +32,6 @@ public class BooleanEvaluator{
     public static boolean evaluate(String expression) throws IllegalBracketException, UnresolvedSymbolException{
         boolean status;
 
-        expression=expression.strip();
-        if(expression.length()<4) throw new UnresolvedSymbolException();
-
         if(expression.contains("(")||expression.contains(")")) status=evalBrackets(expression);
         else status=evalNoBrackets(expression);
 
