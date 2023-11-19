@@ -1,28 +1,23 @@
-package codebase.math.calc;
+package mathozoid.calc;
 
 import java.util.Scanner;
-
-/*
-TODO (NOTES)
-    1. Do not change the order of elements in the validOperators array. If a delimiter is recognised through a regex which is a subexpression of another regex, the smaller one must appear later in the checking order. For example, the loop in evalTerm() should not look for "<" before "<=", or for ">" before ">=".
-*/
 
 public class BooleanEvaluator{
     private static final String[] validOperators={"==","!=","<=",">=","<",">"};//WARNING: DO NOT CHANGE THIS ORDER, SEE NOTES
 
     public static void main(String[] args){
         boolean status;
-        Scanner test=new Scanner(System.in);
+        Scanner input=new Scanner(System.in);
 
         System.out.print("Enter a boolean expression: ");
         try{
-            status= evaluate(test.nextLine());
+            status=evaluate(input.nextLine());
         }catch(IllegalBracketException ibe) {
             System.out.println("The expression you entered has a bracket problem.");
             ibe.printStackTrace();
             return;
         }catch(UnresolvedSymbolException use) {
-            System.out.println("There is something wrong with the expression you entered.");
+            System.out.println("There is something wrong with the symbols you entered.");
             use.printStackTrace();
             return;
         }
