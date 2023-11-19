@@ -1,10 +1,11 @@
 package mathozoid.calc;
 
-import java.util.Scanner;
+//import java.util.Scanner;
 
-public class BooleanEvaluator{
+public final class BooleanEvaluator{
     private static final String[] validOperators={"==","!=","<=",">=","<",">"};//WARNING: DO NOT CHANGE THIS ORDER, SEE NOTES
 
+    /*
     public static void main(String[] args){
         boolean status;
         Scanner input=new Scanner(System.in);
@@ -23,6 +24,7 @@ public class BooleanEvaluator{
         }
         System.out.println("The expression you entered evaluates to "+status+".");
     }
+    */
 
     public static boolean evaluate(String expression) throws IllegalBracketException, UnresolvedSymbolException{
         boolean status;
@@ -139,6 +141,10 @@ public class BooleanEvaluator{
             else if(!"false".equalsIgnoreCase(term)) throw new UnresolvedSymbolException();
         }
         return status;
+    }
+
+    private BooleanEvaluator(){
+        //no instance
     }
 
 }
