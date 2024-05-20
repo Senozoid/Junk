@@ -1,6 +1,7 @@
-package mathozoid.calc;
+package senozoid.mathozoid.evaluators;
 
 //import java.util.Scanner;
+import java.util.regex.Pattern;
 
 public final class BooleanEvaluator{
     private static final String[] validOperators={"==","!=","<=",">=","<",">"};//WARNING: DO NOT CHANGE THIS ORDER, SEE NOTES
@@ -76,7 +77,7 @@ public final class BooleanEvaluator{
     private static boolean evalOR(String expression) throws UnresolvedSymbolException {
         if(!expression.contains("||")) return evalAND(expression);
         boolean status=false;
-        String[] subexes=expression.split("\\|\\|");
+        String[] subexes=expression.split(Pattern.quote("||"));//Pattern.quote("||") is equivalent to "\\|\\|"
         for (String x:subexes) {
             if(evalAND(x)){
                 status=true;
