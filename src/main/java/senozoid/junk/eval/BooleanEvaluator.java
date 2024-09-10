@@ -1,4 +1,4 @@
-package senozoid.mathozoid.evaluators;
+package senozoid.junk.eval;
 
 //import java.util.Scanner;
 import java.util.regex.Pattern;

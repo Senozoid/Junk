@@ -1,3 +1,3 @@
-package senozoid.mathozoid.evaluators;
+package senozoid.junk.eval;
 
 public class UnresolvedSymbolException extends Exception {}
